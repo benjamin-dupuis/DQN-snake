@@ -10,7 +10,7 @@ CHANNELS = 4       # number of channels of the processed game image (1 because t
 N_OUTPUTS = 4         # number of possible actions that the agent can make (the four directions)
 
 
-models_path = './models/model4/'
+models_path = './models/new_model/'
 
 # create the folder where we will save our model if it does not already exist
 if not os.path.isdir(models_path):
