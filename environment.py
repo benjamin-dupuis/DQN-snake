@@ -161,14 +161,6 @@ class Environment:
         state = np.asarray(self.frames).transpose()  # transpose the array so the dimension of the state is (84,84,4)
         return state
 
-    def display_score(self, score):
-        """
-        Takes the score for the game as input and displays it on the left hand corner of the screen
-        """
-        font = pygame.font.SysFont(None, 25)
-        text = font.render('score = ' + str(score), True, BLACK)
-        self.screen.blit(text, (0, 0))
-
     def render(self, display=False):
         """
         Function to show and update the game on the screen
