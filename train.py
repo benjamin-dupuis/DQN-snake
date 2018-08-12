@@ -14,7 +14,7 @@ pygame.init()  # intializes the pygame
 
 # makes the folder where the tensorflow log will be written for Tensorboard visualization
 now = datetime.utcnow().strftime('%Y%m%d%H%M%S')
-root_logdir = 'tf_logs/model4'
+root_logdir = 'tf_logs/new_model'
 if not os.path.isdir(root_logdir):
     os.makedirs(root_logdir)
 
@@ -26,7 +26,7 @@ running = True
 action = 0
 done = False
 iteration = 0
-training_interval = 4
+training_interval = 2
 n_steps = 40000000  # total number of training steps
 n_games = 0
 mean_score = 0
