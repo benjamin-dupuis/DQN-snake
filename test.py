@@ -16,7 +16,7 @@ games_scores = []  # list that will contain the score of each game played by the
 def test_network(n_games):
     episode = 0
     iterations_without_progress = 0
-    max_without_progress = 175
+    max_without_progress = 150
     best_total = 0
 
     with session as sess:
@@ -37,6 +37,7 @@ def test_network(n_games):
             # check if the snake makes progress in the game
             if snake.total > best_total:
                 best_total = snake.total
+                iterations_without_progress = 0
             else:
                 iterations_without_progress += 1
             # if the snake gets stuck, the game is over
