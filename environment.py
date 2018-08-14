@@ -189,6 +189,7 @@ class Environment:
         image = image.convert('L')  # Convert to greyscale
         image = image.resize((INPUT_HEIGHT, INPUT_WIDTH))  # Resize
         matrix = np.asarray(image.getdata(), dtype=np.uint8)
+        matrix = (matrix - 128)/(128 - 1)  # normalize from -1 to 1
         return matrix.reshape(image.size[0], image.size[1])
 
     def step(self, action):
