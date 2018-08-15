@@ -6,7 +6,7 @@ import time
 pygame.init()   # intializes the pygame
 snake = Snake()
 apple = Apple()
-env = Environment(screen_width=400, screen_height=400)   # Environment class
+env = Environment(screen_width=400, screen_height=400)   # makes the screen larger so it's easier to play
 running = True
 done = True
 action = 0  # initialize the action to be 0 (LEFT)
@@ -34,5 +34,5 @@ while running:
             if event.key == pygame.K_DOWN:
                 action = 3
 
-        if event.type == pygame.QUIT:
+        if event.type == pygame.QUIT:  
             running = False
