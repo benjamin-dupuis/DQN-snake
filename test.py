@@ -58,7 +58,7 @@ def test_network(n_games):
 
 if __name__ == '__main__':
 
-    if os.path.isfile(checkpoint_path):  # check to see if the model exists
+    if os.path.isfile(checkpoint_path + ".index"):  # check to see if the model exists
         games_scores = test_network(10)
         mean_score = np.mean(games_scores)
         std = np.std(games_scores)
