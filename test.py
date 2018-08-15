@@ -3,20 +3,21 @@ import tensorflow as tf
 from actorCritic import ActorCritic
 import time
 import pygame
+import os
 
 env = Environment()
 session = tf.Session()
 agent = ActorCritic(session)
 
 pygame.init()   # intializes the pygame
-checkpoint_path = './models/model4/dqn.ckpt'   # path of my trained model
-games_scores = []  # list that will contain the score of each game played by the bot
+checkpoint_path = './models/new_model/dqn.ckpt'   # path of my trained model
+games_scores = []  # list that will contain the score of each game played by the gamebot
 
 
 def test_network(n_games):
     episode = 0
     iterations_without_progress = 0
-    max_without_progress = 150
+    max_without_progress = 175
     best_total = 0
 
     with session as sess:
@@ -57,9 +58,13 @@ def test_network(n_games):
 
 if __name__ == '__main__':
 
-    games_scores = test_network(10)
-    mean_score = np.mean(games_scores)
-    std = np.std(games_scores)
-    max_score = np.max(games_scores)
+    if os.path.isfile(checkpoint_path):  # check to see if the model exists
+        games_scores = test_network(10)
+        mean_score = np.mean(games_scores)
+        std = np.std(games_scores)
+        max_score = np.max(games_scores)
 
-    print("Max score {:.2f}\tMean score {:.2f}\tStandard deviation {:.2f} ".format(max_score, mean_score, std))
+        print("Max score {:.2f}\tMean score {:.2f}\tStandard deviation {:.2f} ".format(max_score, mean_score, std))
+
+    else:
+        raise ValueError('Model file does not exist : a model file is required for testing')
