@@ -26,7 +26,7 @@ def clipped_error(x):
 
 class ActorCritic:
 
-    def __init__(self, sess, learning_rate=0.0001, momentum=0.95, memory_size=50000, discount_rate=0.90):
+    def __init__(self, sess, learning_rate=0.0001, momentum=0.95, memory_size=10000, discount_rate=0.90):
         self.activation = tf.nn.relu
         self.optimizer = tf.train.MomentumOptimizer
         self.learning_rate = learning_rate
@@ -45,15 +45,16 @@ class ActorCritic:
         '''
         self.discount_rate = discount_rate
 
-        self.eps_min = 0.3
+        self.eps_min = 0.1
         self.eps_decay_steps = 2000000
 
         self.sess = sess
         self.init = tf.global_variables_initializer()
+        self.y_vals = None
 
     def cnn_model(self, X_state, name):
         """
-        Creates a CNN network with two convolutional layers followed by two fully connected layers.
+        Creates a CNN network with three convolutional layers followed by two fully connected layers.
         :param X_state: Placeholder for the state of the game
         :param name: Name of the network (actor or critic)
         """
@@ -133,6 +134,7 @@ class ActorCritic:
             mean_score = tf.placeholder(tf.float32, None)    # placeholder for the mean score summary
             self.score_summary = tf.summary.scalar('mean score', mean_score)
             self.mean_score = mean_score
+            self.summary_merged = tf.summary.merge([self.loss_summary, self.score_summary])
 
     def start(self):
         """
@@ -150,9 +152,15 @@ class ActorCritic:
             print('New model...')
         return training_start
 
-    def train(self):
+    def train(self, file_writer, mean_score):
+        """
+        Trains the agent and writes regularly a training summary
+        :param file_writer: file where the training summary will be written for Tensorboard visualization
+        :param mean_score: mean game score
+        """
         copy_steps = 5000  # copy online DQN to target DQN every 5000 training steps
         save_steps = 2000   # save the model every 2000 training steps
+        summary_steps = 200  # write the training summary every 200 training steps
 
         cur_states, actions, rewards, next_states, dones = self.sample_memories()
 
@@ -171,6 +179,12 @@ class ActorCritic:
         # Save the model regularly
         if step % save_steps == 0:
             self.saver.save(self.sess, checkpoint_path)
+
+        if step % summary_steps == 0:
+            summary = self.sess.run(self.summary_merged, feed_dict={
+                self.X_state: cur_states, self.X_action: actions, self.y: y_vals, self.mean_score: mean_score})
+
+            file_writer.add_summary(summary, step)
 
     def predict(self, cur_state):
         """
@@ -222,18 +236,3 @@ class ActorCritic:
                 col.append(value)
         cols = [np.array(col) for col in cols]
         return cols[0], cols[1], cols[2].reshape(-1, 1), cols[3], cols[4].reshape(-1, 1)
-
-    def write_summary(self, file_writer, mean_score, step, batch_size=32):
-        """
-        :param file_writer: log file where the tensorboad summary will be written
-        :param mean_score: mean game score during training
-        :param step: iteration step
-        :param batch_size: size of the batch to evaluate the loss on
-        """
-        states, actions, rewards, next_states, dones = self.sample_memories(batch_size)
-        merged = tf.summary.merge([self.loss_summary, self.score_summary])
-
-        summary = self.sess.run(merged, feed_dict={
-            self.X_state: states, self.X_action: actions, self.y: rewards, self.mean_score: mean_score})
-
-        file_writer.add_summary(summary, step)
