@@ -27,7 +27,7 @@ action = 0
 done = False
 iteration = 0
 training_interval = 2
-n_steps = 40000000  # total number of training steps
+n_steps = 4000000  # total number of training steps
 n_games = 0
 mean_score = 0
 
