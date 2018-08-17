@@ -38,7 +38,7 @@ To start training a new model or to continue training an existing model, run
 python train.py
 ```
 
-To test a model, run 
+To test the performance of your gamebot, run 
 ```
 python test.py
 ```
@@ -51,7 +51,7 @@ python play.py
 To visualize the performance of the model during training (for example 'new_model') with Tensorboard, open a new cmd prompt, and run
 
 ```
-tensorboard --logidr DQN-snake/tf_logs/new_model
+tensorboard --logdir DQN-snake/tf_logs/new_model
 ```
 
 
@@ -59,18 +59,21 @@ tensorboard --logidr DQN-snake/tf_logs/new_model
 
 
 ### Model 1 : 
-During training, the raw pixel values are extracted from the game. Then, those values are converted into features by a Convolutional Neural Network (CNN). The chosen architecture was composed of two convolutional layers followed by two fully connected layers. Below is a schema representing the architecture :  
+During training, the raw pixel values are extracted from the game. Then, those values are converted into features by a Convolutional Neural Network (CNN). The chosen architecture was composed of two convolutional layers followed by two fully connected layers. Below is a figure representing the architecture :  
 
 ![architecture](assets/architecture_2.PNG)
 
 
 For our first try, the chosen hyperparameters were the following : 
 
-- memory size : 10 000
-- momentum = 0.95
-- discount rate = 0.90
-- training_interval = 2
-- learning rate = 0.0001
+- memory_size : 50 000
+- momentum : 0.95
+- discount_rate : 0.90
+- training_interval : 2
+- learning_rate : 0.0001
+- eps_min : 0.1
+- eps_decay_steps : 2 000 000
+- n_steps : 4 000 000
 
 
 ## References 
