@@ -60,12 +60,11 @@ with session as sess:
             continue
 
         # train the agent
-        agent.train()
+        agent.train(file_writer, mean_score)
 
         if iteration % 200 == 0:
             print("\rTraining step {}/{} ({:.1f})%\tMean score {:.2f} ".format(
                 step, n_steps, step * 100 / n_steps, mean_score), end="")
-            agent.write_summary(file_writer, mean_score, step)  # write the loss summary in Tensorboard
 
         if step > n_steps:
             break
