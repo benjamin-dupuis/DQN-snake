@@ -12,7 +12,7 @@ done = True
 action = 0  # initialize the action to be 0 (LEFT)
 
 while running:
-    time.sleep(0.1)   # to make the game slow down
+    time.sleep(0.08)   # to make the game slow down
 
     if done:   # game over, start a new game
         time.sleep(1)
