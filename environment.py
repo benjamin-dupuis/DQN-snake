@@ -9,10 +9,6 @@ from collections import deque
 WHITE = (255, 255, 255)
 SCREEN_WIDTH = 225
 SCREEN_HEIGHT = 225
-RED = (255, 0, 0)
-GREEN = (0, 255, 0)
-BLUE = (0, 0, 255)
-BLACK = (0, 0, 0)
 OUT_PENALTY = -1    # when the snake quits the screen
 LIFE_REWARD = 0    # reward given to the snake for being alive
 APPLE_REWARD = 1
@@ -37,8 +33,7 @@ def image_transform(image_path, image_width, image_heigth):
 
 class Snake:
 
-    def __init__(self, color=GREEN, lenght=3, speed=25):
-        self.color = color
+    def __init__(self, lenght=3, speed=25):
         self.lenght = lenght
         self.x = int(SCREEN_WIDTH/2)
         self.y = int(SCREEN_HEIGHT/2)
@@ -113,10 +108,9 @@ snake = Snake()  # creation of snake object
 
 class Apple:
 
-    def __init__(self, color=RED):
+    def __init__(self):
         self.x = random.randrange(5, SCREEN_WIDTH - 15)
         self.y = random.randrange(5, SCREEN_HEIGHT - 15)
-        self.color = color
         self.size = snake.size
 
     def get_new_position(self):
@@ -193,6 +187,12 @@ class Environment:
         matrix = (matrix - 128)/(128 - 1)  # normalize from -1 to 1
         return matrix.reshape(image.size[0], image.size[1])
 
+    def gif(self):
+        data = pygame.image.tostring(self.screen, 'RGB')  # Take screenshot
+        image = Image.frombytes('RGB', (self.screen_width, self.screen_height), data)
+        matrix = np.asarray(image.getdata(), dtype=np.uint8)
+        return matrix.reshape(image.size[0], image.size[1], 3)
+
     def step(self, action):
         """
         Makes the snake move according to the selected action
@@ -205,7 +205,7 @@ class Environment:
         reward = LIFE_REWARD
 
         # IF SNAKE QUITS THE SCREEEN
-        if snake.tail[0][0] < -15 or snake.tail[0][0] > self.screen_width or snake.tail[0][1] < -15 or snake.tail[0][1] > self.screen_height:
+        if snake.tail[0][0] < -15 or snake.tail[0][0] > self.screen_width or snake.tail[0][1] < -5 or snake.tail[0][1] > self.screen_height:
             reward = OUT_PENALTY
             done = True
 
