@@ -24,7 +24,7 @@ https://www.tensorflow.org/install .
 
 To download the repository, open a cmd prompt and execute 
 ```
-git clone https://github.com/BenjaminCanada/DQN-snake.git
+git clone https://github.com/benjamin-dupuis/DQN-snake.git
 ```
 
 This will create a folder on your computer that you can access from the command prompt by executing 
