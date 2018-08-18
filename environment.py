@@ -96,6 +96,7 @@ class Snake:
         self.x = int(SCREEN_WIDTH/2)
         self.y = int(SCREEN_HEIGHT/2)
         self.tail = deque([self.x + i * self.speed, self.y] for i in range(self.lenght))
+        self.direction = 0
 
     def draw(self, screen, image):
         """
@@ -204,7 +205,7 @@ class Environment:
         reward = LIFE_REWARD
 
         # IF SNAKE QUITS THE SCREEEN
-        if snake.tail[0][0] < 0 or snake.tail[0][0] >= self.screen_width or snake.tail[0][1] <= 0 or snake.tail[0][1] > self.screen_height:
+        if snake.tail[0][0] < -15 or snake.tail[0][0] > self.screen_width or snake.tail[0][1] < -15 or snake.tail[0][1] > self.screen_height:
             reward = OUT_PENALTY
             done = True
 
@@ -220,12 +221,14 @@ class Environment:
             self.total_rewards += 1
 
         # IF SNAKE EATS ITSELF
-        if len(snake.tail) > 3:
-            for i in range(3, len(snake.tail) - 1):
-                if snake.tail[0] == snake.tail[i]:
-                    done = True
-                    reward = -1
-                    break
+        for i in range(3, len(snake.tail)):
+            tail_pos = (snake.tail[0][0], snake.tail[0][1])
+            body_part_pos = (snake.tail[i][0], snake.tail[i][1])
+            dst_body = distance.euclidean(tail_pos, body_part_pos)  # distance between the snake head and his body parts
+            if dst_body < snake.size:
+                done = True
+                reward = -1
+                break
 
         new_observation = self.screenshot()
 
