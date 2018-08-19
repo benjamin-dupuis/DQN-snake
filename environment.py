@@ -62,7 +62,6 @@ class Snake:
             return False
 
     def move(self, action):
-
         # if the snake tries to go backwards, it keeps his original direction
         if self.is_moving_backwards(action):
             action = self.direction
@@ -114,8 +113,18 @@ class Apple:
         self.size = snake.size
 
     def get_new_position(self):
-        self.x = random.randrange(5, SCREEN_WIDTH - 15)
-        self.y = random.randrange(5, SCREEN_HEIGHT - 15)
+        """
+        Gets a new position for the apple. Checks to be sure the apple is not
+        placed inside the snake's body. If so, a new position is obtained.
+        """
+        x = random.randrange(5, SCREEN_WIDTH - 15)
+        y = random.randrange(5, SCREEN_HEIGHT - 15)
+        for i in range(len(snake.tail)):
+            if [x, y] == snake.tail[i]:
+                self.get_new_position()
+
+        self.x = x
+        self.y = y
 
     def draw(self, screen, image):
         screen.blit(image, (self.x, self.y))
@@ -129,16 +138,17 @@ class Environment:
     def __init__(self, screen_width=SCREEN_WIDTH, screen_height=SCREEN_HEIGHT):
         self.total_rewards = 0
         self.reset()
-        self.screen = pygame.display.set_mode((screen_width, screen_height))
-        self.screen_width = screen_width
-        self.screen_height = screen_height
-        self.frames = None
-        self.num_last_frames = 4
+        self._screen = pygame.display.set_mode((screen_width, screen_height))
+        self._screen_width = screen_width
+        self._screen_height = screen_height
+        self._frames = None
+        self._num_last_frames = 4
+        self._empty_cells = set()
 
     def reset(self):
         snake.dead()
         apple.get_new_position()
-        self.frames = None
+        self._frames = None
 
     def get_last_frames(self, observation):
         """
@@ -148,12 +158,12 @@ class Environment:
         :return: a state containing the 4 previous frames taken from the game
         """
         frame = observation
-        if self.frames is None:
-            self.frames = deque([frame] * self.num_last_frames)
+        if self._frames is None:
+            self._frames = deque([frame] * self._num_last_frames)
         else:
-            self.frames.append(frame)
-            self.frames.popleft()
-        state = np.asarray(self.frames).transpose()  # transpose the array so the dimension of the state is (84,84,4)
+            self._frames.append(frame)
+            self._frames.popleft()
+        state = np.asarray(self._frames).transpose()  # transpose the array so the dimension of the state is (84,84,4)
         return state
 
     def render(self, display=False):
@@ -161,13 +171,13 @@ class Environment:
         Function to show and update the game on the screen
         :param display: true if we want to show the score on the screen
         """
-        self.screen.fill(WHITE)
+        self._screen.fill(WHITE)
 
         image_snake = image_transform('./images/bloc.png', snake.size, snake.size)
         image_apple = image_transform('./images/apple.jpg', apple.size, apple.size)
 
-        apple.draw(self.screen, image_apple)
-        snake.draw(self.screen, image_snake)
+        apple.draw(self._screen, image_apple)
+        snake.draw(self._screen, image_snake)
 
         if display is True:
             pygame.display.set_caption('Score : ' + str(snake.total))  # the score appears in the screen title
@@ -179,19 +189,13 @@ class Environment:
         and returns a np.array.
         Credits goes to https://github.com/danielegrattarola/deep-q-snake/blob/master/snake.py
         """
-        data = pygame.image.tostring(self.screen, 'RGB')  # Take screenshot
-        image = Image.frombytes('RGB', (self.screen_width, self.screen_height), data)
+        data = pygame.image.tostring(self._screen, 'RGB')  # Take screenshot
+        image = Image.frombytes('RGB', (self._screen_width, self._screen_height), data)
         image = image.convert('L')  # Convert to greyscale
         image = image.resize((INPUT_HEIGHT, INPUT_WIDTH))  # Resize
         matrix = np.asarray(image.getdata(), dtype=np.uint8)
         matrix = (matrix - 128)/(128 - 1)  # normalize from -1 to 1
         return matrix.reshape(image.size[0], image.size[1])
-
-    def gif(self):
-        data = pygame.image.tostring(self.screen, 'RGB')  # Take screenshot
-        image = Image.frombytes('RGB', (self.screen_width, self.screen_height), data)
-        matrix = np.asarray(image.getdata(), dtype=np.uint8)
-        return matrix.reshape(image.size[0], image.size[1], 3)
 
     def step(self, action):
         """
@@ -205,7 +209,7 @@ class Environment:
         reward = LIFE_REWARD
 
         # IF SNAKE QUITS THE SCREEEN
-        if snake.tail[0][0] < -15 or snake.tail[0][0] > self.screen_width or snake.tail[0][1] < -5 or snake.tail[0][1] > self.screen_height:
+        if snake.x < -15 or snake.x > self._screen_width or snake.y < -5 or snake.y > self._screen_height:
             reward = OUT_PENALTY
             done = True
 
