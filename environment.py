@@ -43,7 +43,7 @@ class Snake:
         self.direction = 0
         self.total = 0
 
-    def is_moving_backwards(self, action):
+    def _is_moving_backwards(self, action):
         """
         Function to see if the snake is trying to move backwards (which you can't do in the game)
         :param action: action selected by the agent
@@ -63,7 +63,7 @@ class Snake:
 
     def move(self, action):
         # if the snake tries to go backwards, it keeps his original direction
-        if self.is_moving_backwards(action):
+        if self._is_moving_backwards(action):
             action = self.direction
         else:
             self.direction = action
@@ -115,16 +115,13 @@ class Apple:
     def get_new_position(self):
         """
         Gets a new position for the apple. Checks to be sure the apple is not
-        placed inside the snake's body. If so, a new position is obtained.
+        placed inside the snake's body.
         """
-        x = random.randrange(5, SCREEN_WIDTH - 15)
-        y = random.randrange(5, SCREEN_HEIGHT - 15)
-        for i in range(len(snake.tail)):
-            if [x, y] == snake.tail[i]:
-                self.get_new_position()
+        all_positions = [[x,y] for x in range(5, SCREEN_WIDTH - 15) for y in range(5, SCREEN_WIDTH - 15)]
+        allowed_positions = [coord for coord in all_positions if coord not in snake.tail]
+        self.x = random.choice(allowed_positions)[0]
+        self.y = random.choice(allowed_positions)[1]
 
-        self.x = x
-        self.y = y
 
     def draw(self, screen, image):
         screen.blit(image, (self.x, self.y))
@@ -169,7 +166,7 @@ class Environment:
     def render(self, display=False):
         """
         Function to show and update the game on the screen
-        :param display: true if we want to show the score on the screen
+        :param display: true if we want to show the score as the title of the screen
         """
         self._screen.fill(WHITE)
 
@@ -196,7 +193,7 @@ class Environment:
         matrix = np.asarray(image.getdata(), dtype=np.uint8)
         matrix = (matrix - 128)/(128 - 1)  # normalize from -1 to 1
         return matrix.reshape(image.size[0], image.size[1])
-
+    
     def step(self, action):
         """
         Makes the snake move according to the selected action
@@ -206,7 +203,7 @@ class Environment:
         done = False
         snake.move(action)
 
-        reward = LIFE_REWARD
+        reward = LIFE_REWARD   # reward given to stay alive
 
         # IF SNAKE QUITS THE SCREEEN
         if snake.x < -15 or snake.x > self._screen_width or snake.y < -5 or snake.y > self._screen_height:
@@ -226,9 +223,9 @@ class Environment:
 
         # IF SNAKE EATS ITSELF
         for i in range(3, len(snake.tail)):
-            tail_pos = (snake.tail[0][0], snake.tail[0][1])
+            head_pos = (snake.tail[0][0], snake.tail[0][1])
             body_part_pos = (snake.tail[i][0], snake.tail[i][1])
-            dst_body = distance.euclidean(tail_pos, body_part_pos)  # distance between the snake head and his body parts
+            dst_body = distance.euclidean(head_pos, body_part_pos)  # distance between the snake head and his body parts
             if dst_body < snake.size:
                 done = True
                 reward = -1
