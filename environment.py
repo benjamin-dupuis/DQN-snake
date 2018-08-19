@@ -121,8 +121,7 @@ class Apple:
         allowed_positions = [coord for coord in all_positions if coord not in snake.tail]
         self.x = random.choice(allowed_positions)[0]
         self.y = random.choice(allowed_positions)[1]
-
-
+ 
     def draw(self, screen, image):
         screen.blit(image, (self.x, self.y))
 
@@ -222,8 +221,8 @@ class Environment:
             self.total_rewards += 1
 
         # IF SNAKE EATS ITSELF
-        for i in range(3, len(snake.tail)):
-            head_pos = (snake.tail[0][0], snake.tail[0][1])
+        head_pos = (snake.tail[0][0], snake.tail[0][1])
+        for i in range(2, len(snake.tail)):
             body_part_pos = (snake.tail[i][0], snake.tail[i][1])
             dst_body = distance.euclidean(head_pos, body_part_pos)  # distance between the snake head and his body parts
             if dst_body < snake.size:
