@@ -2,6 +2,8 @@
 TensorFlow implementation of a DQN algorithm to learn to play the game of Snake.
 The game was written using Pygame. During training, a Tensorboad file is produced to visualize the performance of the model.
 
+![ezgif com-gif-maker](https://user-images.githubusercontent.com/41129002/44306716-6ddb2100-a362-11e8-8fde-26d8fc375742.gif)
+
 
 ## Requirements
 
@@ -64,7 +66,7 @@ During training, the raw pixel values are extracted from the game. Then, those v
 ![architecture](assets/architecture_2.PNG)
 
 
-For our first try, the chosen hyperparameters were the following : 
+For the first try, the chosen hyperparameters were the following : 
 
 - memory_size : 50 000
 - momentum : 0.95
@@ -73,7 +75,15 @@ For our first try, the chosen hyperparameters were the following :
 - learning_rate : 0.0001
 - eps_min : 0.1
 - eps_decay_steps : 2 000 000
-- n_steps : 4 000 000
+- n_steps : 5 000 000
+
+
+After 5 000 000 training steps, I tested the gamebot by making it play 200 games. It obtained the following results : 
+
+- Max score : 17.00, Mean score : 2.63, Standard deviation : 3.41. 
+
+The low mean score is representative of the fact that the snake was prone to getting stuck (always repeating the same movements).
+In the future, I will try different versions of the model, especially by changing the discount rate. 
 
 
 ## References 
