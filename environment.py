@@ -7,8 +7,8 @@ from collections import deque
 
 
 WHITE = (255, 255, 255)
-SCREEN_WIDTH = 225
-SCREEN_HEIGHT = 225
+SCREEN_WIDTH = 250
+SCREEN_HEIGHT = 250
 OUT_PENALTY = -1    # when the snake quits the screen
 LIFE_REWARD = 0    # reward given to the snake for being alive
 APPLE_REWARD = 1
@@ -117,11 +117,11 @@ class Apple:
         Gets a new position for the apple. Checks to be sure the apple is not
         placed inside the snake's body.
         """
-        all_positions = [[x,y] for x in range(5, SCREEN_WIDTH - 15) for y in range(5, SCREEN_WIDTH - 15)]
+        all_positions = [[x, y] for x in range(5, SCREEN_WIDTH - 15) for y in range(5, SCREEN_WIDTH - 15)]
         allowed_positions = [coord for coord in all_positions if coord not in snake.tail]
         self.x = random.choice(allowed_positions)[0]
         self.y = random.choice(allowed_positions)[1]
- 
+
     def draw(self, screen, image):
         screen.blit(image, (self.x, self.y))
 
@@ -192,7 +192,7 @@ class Environment:
         matrix = np.asarray(image.getdata(), dtype=np.uint8)
         matrix = (matrix - 128)/(128 - 1)  # normalize from -1 to 1
         return matrix.reshape(image.size[0], image.size[1])
-    
+
     def step(self, action):
         """
         Makes the snake move according to the selected action
@@ -205,7 +205,7 @@ class Environment:
         reward = LIFE_REWARD   # reward given to stay alive
 
         # IF SNAKE QUITS THE SCREEEN
-        if snake.x < -15 or snake.x > self._screen_width or snake.y < -5 or snake.y > self._screen_height:
+        if snake.x in [-snake.size, self._screen_width] or snake.y in [-snake.size, self._screen_height]:
             reward = OUT_PENALTY
             done = True
 
