@@ -108,16 +108,19 @@ snake = Snake()  # creation of snake object
 class Apple:
 
     def __init__(self):
+        self.size = snake.size
         self.x = random.randrange(5, SCREEN_WIDTH - 15)
         self.y = random.randrange(5, SCREEN_HEIGHT - 15)
-        self.size = snake.size
 
-    def get_new_position(self):
+    def get_new_position(self, screen_width, screen_height):
         """
         Gets a new position for the apple. Checks to be sure the apple is not
         placed inside the snake's body.
+        :param screen_width: width of the pygame screen
+        :param screen_height: height of the pygame screen
         """
-        all_positions = [[x, y] for x in range(5, SCREEN_WIDTH - 15) for y in range(5, SCREEN_WIDTH - 15)]
+        all_positions = [[x, y] for x in range(self.size, screen_width - self.size)
+                         for y in range(self.size, screen_height - self.size)]
         allowed_positions = [coord for coord in all_positions if coord not in snake.tail]
         self.x = random.choice(allowed_positions)[0]
         self.y = random.choice(allowed_positions)[1]
@@ -133,17 +136,16 @@ class Environment:
 
     def __init__(self, screen_width=SCREEN_WIDTH, screen_height=SCREEN_HEIGHT):
         self.total_rewards = 0
-        self.reset()
         self._screen = pygame.display.set_mode((screen_width, screen_height))
         self._screen_width = screen_width
         self._screen_height = screen_height
         self._frames = None
         self._num_last_frames = 4
-        self._empty_cells = set()
+        self.reset()
 
     def reset(self):
         snake.dead()
-        apple.get_new_position()
+        apple.get_new_position(self._screen_width, self._screen_height)
         self._frames = None
 
     def get_last_frames(self, observation):
@@ -193,6 +195,12 @@ class Environment:
         matrix = (matrix - 128)/(128 - 1)  # normalize from -1 to 1
         return matrix.reshape(image.size[0], image.size[1])
 
+    def gif(self):
+        data = pygame.image.tostring(self._screen, 'RGB')  # Take screenshot
+        image = Image.frombytes('RGB', (self._screen_width, self._screen_height), data)
+        matrix = np.asarray(image.getdata(), dtype=np.uint8)
+        return matrix.reshape(image.size[0], image.size[1], 3)
+
     def step(self, action):
         """
         Makes the snake move according to the selected action
@@ -217,7 +225,7 @@ class Environment:
         if dst <= apple.size:
             snake.eat()
             reward = APPLE_REWARD
-            apple.get_new_position()
+            apple.get_new_position(self._screen_width, self._screen_height)
             self.total_rewards += 1
 
         # IF SNAKE EATS ITSELF
