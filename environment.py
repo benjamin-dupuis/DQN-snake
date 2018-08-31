@@ -194,13 +194,7 @@ class Environment:
         matrix = np.asarray(image.getdata(), dtype=np.uint8)
         matrix = (matrix - 128)/(128 - 1)  # normalize from -1 to 1
         return matrix.reshape(image.size[0], image.size[1])
-
-    def gif(self):
-        data = pygame.image.tostring(self._screen, 'RGB')  # Take screenshot
-        image = Image.frombytes('RGB', (self._screen_width, self._screen_height), data)
-        matrix = np.asarray(image.getdata(), dtype=np.uint8)
-        return matrix.reshape(image.size[0], image.size[1], 3)
-
+    
     def step(self, action):
         """
         Makes the snake move according to the selected action
