@@ -4,15 +4,15 @@ from utils import ReplayMemory
 import os
 
 
-INPUT_HEIGHT = 84     # desired height of the reshaped game image
-INPUT_WIDTH = 84      # desired width of the reshaped game image
-CHANNELS = 4       # number of channels of the processed game image (1 because the image is converted to grayscale)
-N_OUTPUTS = 4         # number of possible actions that the agent can make (the four directions)
+INPUT_HEIGHT = 84     
+INPUT_WIDTH = 84     
+CHANNELS = 4       
+N_OUTPUTS = 4         # Number of possible actions that the agent can make (the four directions)
 
 
 models_path = './models/new_model/'
 
-# create the folder where we will save our model if it does not already exist
+# Create the folder where we will save our model if it does not already exist
 if not os.path.isdir(models_path):
     os.makedirs(models_path)
 
@@ -99,8 +99,8 @@ class ActorCritic:
         """
 
         X_state = tf.placeholder(tf.float32, shape=[None, INPUT_HEIGHT, INPUT_WIDTH, CHANNELS])
-        actor_q_values, actor_vars = self.cnn_model(X_state, name="actor")   # actor
-        critic_q_values, critic_vars = self.cnn_model(X_state, name="critic")   # critic
+        actor_q_values, actor_vars = self.cnn_model(X_state, name="actor")   
+        critic_q_values, critic_vars = self.cnn_model(X_state, name="critic")   
 
         with tf.variable_scope("train"):
             X_action = tf.placeholder(tf.int32, shape=[None])
@@ -131,9 +131,8 @@ class ActorCritic:
 
         with tf.variable_scope('summary'):
             self.loss_summary = tf.summary.scalar('loss', loss)
-            mean_score = tf.placeholder(tf.float32, None)    # placeholder for the mean score summary
-            self.score_summary = tf.summary.scalar('mean score', mean_score)
-            self.mean_score = mean_score
+            self.mean_score = tf.placeholder(tf.float32, None)    
+            self.score_summary = tf.summary.scalar('mean score', self.mean_score)
             self.summary_merged = tf.summary.merge([self.loss_summary, self.score_summary])
 
     def start(self):
@@ -143,10 +142,12 @@ class ActorCritic:
         """
         if os.path.isfile(checkpoint_path + '.index'):
             self.saver.restore(self.sess, checkpoint_path)
-            training_start = 1  # make the training start immediatly if the model already exists
+            # Make the training start immediatly if the model already exists
+            training_start = 1  
             print('Restoring model...')
         else:
-            training_start = 10000  # make the model warm up before training
+            # Make the model warm up before training
+            training_start = 10000  
             self.init.run()
             self.make_copy().run()
             print('New model...')
@@ -158,9 +159,9 @@ class ActorCritic:
         :param file_writer: file where the training summary will be written for Tensorboard visualization
         :param mean_score: mean game score
         """
-        copy_steps = 5000  # copy online DQN to target DQN every 5000 training steps
-        save_steps = 2000   # save the model every 2000 training steps
-        summary_steps = 200  # write the training summary every 200 training steps
+        copy_steps = 5000  
+        save_steps = 2000   
+        summary_steps = 200 
 
         cur_states, actions, rewards, next_states, dones = self.sample_memories()
 
@@ -180,6 +181,7 @@ class ActorCritic:
         if step % save_steps == 0:
             self.saver.save(self.sess, checkpoint_path)
 
+        # Write the training summary regularly
         if step % summary_steps == 0:
             summary = self.sess.run(self.summary_merged, feed_dict={
                 self.X_state: cur_states, self.X_action: actions, self.y: y_vals, self.mean_score: mean_score})
@@ -208,9 +210,9 @@ class ActorCritic:
         eps_max = 1.0
         epsilon = max(self.eps_min, eps_max - (eps_max - self.eps_min) * step / self.eps_decay_steps)
         if np.random.rand() < epsilon:
-            return np.random.randint(N_OUTPUTS)  # random action
+            return np.random.randint(N_OUTPUTS)  # Random action
         else:
-            return np.argmax(q_values)  # optimal action
+            return np.argmax(q_values)  # Optimal action
 
     def make_copy(self):
         """
