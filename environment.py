@@ -9,11 +9,11 @@ from collections import deque
 WHITE = (255, 255, 255)
 SCREEN_WIDTH = 250
 SCREEN_HEIGHT = 250
-OUT_PENALTY = -1    # when the snake quits the screen
-LIFE_REWARD = 0    # reward given to the snake for being alive
+OUT_PENALTY = -1    # Penalty when the snake quits the screen
+LIFE_REWARD = 0    # Reward given to the snake for being alive
 APPLE_REWARD = 1
-INPUT_HEIGHT = 84  # height of the reshaped screen image
-INPUT_WIDTH = 84   # width of the reshaped screen image
+INPUT_HEIGHT = 84  # Height of the reshaped screen image
+INPUT_WIDTH = 84   # Width of the reshaped screen image
 
 pygame.init()
 
@@ -49,7 +49,7 @@ class Snake:
         :param action: action selected by the agent
         :return: True is the action is the inverse of the snake's direction and False otherwise
         """
-        # if the action selected and the direction are opposites
+        # If the action selected and the direction are opposites
         if self.direction == 0 and action == 1:
             return True
         if self.direction == 1 and action == 0:
@@ -62,7 +62,7 @@ class Snake:
             return False
 
     def move(self, action):
-        # if the snake tries to go backwards, it keeps his original direction
+        # If the snake tries to go backwards, it keeps his original direction
         if self._is_moving_backwards(action):
             action = self.direction
         else:
@@ -102,7 +102,7 @@ class Snake:
             screen.blit(image, (self.tail[i][0], self.tail[i][1]))
 
 
-snake = Snake()  # creation of snake object
+snake = Snake() 
 
 
 class Apple:
@@ -129,7 +129,7 @@ class Apple:
         screen.blit(image, (self.x, self.y))
 
 
-apple = Apple()  # creation of apple object
+apple = Apple() 
 
 
 class Environment:
@@ -161,13 +161,13 @@ class Environment:
         else:
             self._frames.append(frame)
             self._frames.popleft()
-        state = np.asarray(self._frames).transpose()  # transpose the array so the dimension of the state is (84,84,4)
+        state = np.asarray(self._frames).transpose()  # Transpose the array so the dimension of the state is (84,84,4)
         return state
 
     def render(self, display=False):
         """
         Function to show and update the game on the screen
-        :param display: true if we want to show the score as the title of the screen
+        :param display: true if we want to show the score in the title of the screen
         """
         self._screen.fill(WHITE)
 
@@ -178,7 +178,7 @@ class Environment:
         snake.draw(self._screen, image_snake)
 
         if display is True:
-            pygame.display.set_caption('Score : ' + str(snake.total))  # the score appears in the screen title
+            pygame.display.set_caption('Score : ' + str(snake.total)) 
         pygame.display.update()
 
     def screenshot(self):
@@ -192,7 +192,7 @@ class Environment:
         image = image.convert('L')  # Convert to greyscale
         image = image.resize((INPUT_HEIGHT, INPUT_WIDTH))  # Resize
         matrix = np.asarray(image.getdata(), dtype=np.uint8)
-        matrix = (matrix - 128)/(128 - 1)  # normalize from -1 to 1
+        matrix = (matrix - 128)/(128 - 1)  # Normalize from -1 to 1
         return matrix.reshape(image.size[0], image.size[1])
     
     def step(self, action):
@@ -204,7 +204,7 @@ class Environment:
         done = False
         snake.move(action)
 
-        reward = LIFE_REWARD   # reward given to stay alive
+        reward = LIFE_REWARD   # Reward given to stay alive
 
         # IF SNAKE QUITS THE SCREEEN
         if snake.x in [-snake.size, self._screen_width] or snake.y in [-snake.size, self._screen_height]:
@@ -213,7 +213,7 @@ class Environment:
 
         snake_position = (snake.x, snake.y)
         apple_position = (apple.x, apple.y)
-        dst = distance.euclidean(snake_position, apple_position)  # distance between the snake head and the apple
+        dst = distance.euclidean(snake_position, apple_position)  # Distance between the snake head and the apple
 
         # IF SNAKES EATS THE APPLE
         if dst <= apple.size:
@@ -226,7 +226,7 @@ class Environment:
         head_pos = (snake.tail[0][0], snake.tail[0][1])
         for i in range(2, len(snake.tail)):
             body_part_pos = (snake.tail[i][0], snake.tail[i][1])
-            dst_body = distance.euclidean(head_pos, body_part_pos)  # distance between the snake head and his body parts
+            dst_body = distance.euclidean(head_pos, body_part_pos)  
             if dst_body < snake.size:
                 done = True
                 reward = -1
