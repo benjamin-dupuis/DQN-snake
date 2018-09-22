@@ -9,9 +9,9 @@ env = Environment()
 session = tf.Session()
 agent = ActorCritic(session)
 
-pygame.init()   # intializes the pygame
-checkpoint_path = './models/new_model/dqn.ckpt'   # path of my trained model
-games_scores = []  # list that will contain the score of each game played by the gamebot
+pygame.init()   # Intializes the pygame
+checkpoint_path = './models/new_model/dqn.ckpt'   # Path of the trained model
+games_scores = []  # List that will contain the score of each game played by the gamebot
 
 
 def test_network(n_games):
@@ -21,10 +21,10 @@ def test_network(n_games):
     best_total = 0
 
     with session as sess:
-        agent.saver.restore(sess, checkpoint_path)   # restore the model
+        agent.saver.restore(sess, checkpoint_path)   # Restore the model
 
-        while episode < n_games:  # number of games that we want the robot to play
-            time.sleep(600.0 / 10000.0)     # to make the game slow down
+        while episode < n_games:  # Number of games that we want the robot to play
+            time.sleep(600.0 / 10000.0)     # Make the game slow down
 
             env.render(display=True)
             observation = env.screenshot()
@@ -35,21 +35,21 @@ def test_network(n_games):
 
             new_state, reward, done = env.step(action)
 
-            # check if the snake makes progress in the game
+            # Check if the snake makes progress in the game
             if snake.total > best_total:
                 best_total = snake.total
                 iterations_without_progress = 0
             else:
                 iterations_without_progress += 1
-            # if the snake gets stuck, the game is over
+            # If the snake gets stuck, the game is over
             if iterations_without_progress >= max_without_progress:
                 done = True
 
-            if done:   # game over, start a new game
+            if done:   # Game over, start a new game
                 time.sleep(1)
                 games_scores.append(snake.total)
                 env.reset()
-                episode += 1  # increment the number of games played
+                episode += 1  # Increment the number of games played
                 iterations_without_progress = 0
                 best_total = 0
 
@@ -58,7 +58,7 @@ def test_network(n_games):
 
 if __name__ == '__main__':
 
-    if os.path.isfile(checkpoint_path + ".index"):  # check to see if the model exists
+    if os.path.isfile(checkpoint_path + ".index"):  # Check to see if the model exists
         games_scores = test_network(10)
         mean_score = np.mean(games_scores)
         std = np.std(games_scores)
