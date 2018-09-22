@@ -10,16 +10,16 @@ env = Environment()
 session = tf.Session()
 agent = ActorCritic(session)
 
-pygame.init()  # intializes the pygame
+pygame.init()  # Intializes the game
 
-# makes the folder where the tensorflow log will be written for Tensorboard visualization
+# Makes the folder where the tensorflow log will be written for Tensorboard visualization
 now = datetime.utcnow().strftime('%Y%m%d%H%M%S')
 root_logdir = 'tf_logs/new_model'
 if not os.path.isdir(root_logdir):
     os.makedirs(root_logdir)
 
 log_dir = '{}/run-{}/'.format(root_logdir, now)
-file_writer = tf.summary.FileWriter(log_dir, session.graph)  # log file for Tensorboard
+file_writer = tf.summary.FileWriter(log_dir, session.graph)  # Log file for Tensorboard
 
 
 running = True
@@ -27,7 +27,7 @@ action = 0
 done = False
 iteration = 0
 training_interval = 4
-n_steps = 5000000  # total number of training steps
+n_steps = 5000000  # Total number of training steps
 n_games = 0
 mean_score = 0
 
@@ -38,12 +38,12 @@ with session as sess:
         iteration += 1
         env.render()
 
-        if done:  # game over, start a new game
+        if done:  # Game over, start a new game
             env.reset()
             n_games += 1
             mean_score = env.total_rewards / n_games
 
-        for event in pygame.event.get():  # stops the program if we quit the game
+        for event in pygame.event.get():  # Stop the program if we quit the game
             if event.type == pygame.QUIT:
                 running = False
 
@@ -59,7 +59,7 @@ with session as sess:
         if iteration < training_start or iteration % training_interval != 0:
             continue
 
-        # train the agent
+        # Train the agent
         agent.train(file_writer, mean_score)
 
         if iteration % 200 == 0:
