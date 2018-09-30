@@ -54,7 +54,7 @@ class ActorCritic:
 
     def cnn_model(self, X_state, name):
         """
-        Creates a CNN network with three convolutional layers followed by two fully connected layers.
+        Creates a CNN network with two convolutional layers followed by two fully connected layers.
         
         :param X_state: Placeholder for the state of the game
         :param name: Name of the network (actor or critic)
