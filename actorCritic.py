@@ -7,7 +7,7 @@ import os
 INPUT_HEIGHT = 84     
 INPUT_WIDTH = 84     
 CHANNELS = 4       
-N_OUTPUTS = 4         # Number of possible actions that the agent can make (the four directions)
+N_OUTPUTS = 4  # Number of possible actions that the agent can make (the four directions)
 
 
 models_path = './models/new_model/'
@@ -55,8 +55,10 @@ class ActorCritic:
     def cnn_model(self, X_state, name):
         """
         Creates a CNN network with three convolutional layers followed by two fully connected layers.
+        
         :param X_state: Placeholder for the state of the game
         :param name: Name of the network (actor or critic)
+        :return : The output (logits) layer and the trainable variables
         """
 
         initializer = tf.contrib.layers.variance_scaling_initializer()
@@ -137,12 +139,12 @@ class ActorCritic:
 
     def start(self):
         """
-        Function to intialize the model or restore the model if it already exists
+        Intialize the model or restore the model if it already exists.
+        
         :return: Iteration that we want the model to start training
         """
         if os.path.isfile(checkpoint_path + '.index'):
             self.saver.restore(self.sess, checkpoint_path)
-            # Make the training start immediatly if the model already exists
             training_start = 1  
             print('Restoring model...')
         else:
@@ -155,13 +157,14 @@ class ActorCritic:
 
     def train(self, file_writer, mean_score):
         """
-        Trains the agent and writes regularly a training summary
+        Trains the agent and writes regularly a training summary.
+        
         :param file_writer: file where the training summary will be written for Tensorboard visualization
         :param mean_score: mean game score
         """
         copy_steps = 5000  
         save_steps = 2000   
-        summary_steps = 200 
+        summary_steps = 500 
 
         cur_states, actions, rewards, next_states, dones = self.sample_memories()
 
@@ -191,6 +194,7 @@ class ActorCritic:
     def predict(self, cur_state):
         """
         Makes the actor predict q-values based on the current state of the game.
+        
         :param cur_state: Current state of the game
         :return The Q-values predicted by the actor
         """
@@ -217,7 +221,8 @@ class ActorCritic:
     def make_copy(self):
         """
         Makes regular copies of the training varibales from the critic to the actor.
-        Credits goes to https://github.com/ageron/handson-ml/blob/master/16_reinforcement_learning.ipynb
+        Credits goes to https://github.com/ageron/handson-ml/blob/master/16_reinforcement_learning.ipynb.
+        
         :return: A copy of the training variables
         """
         copy_ops = [target_var.assign(self.actor_vars[var_name])
@@ -227,8 +232,9 @@ class ActorCritic:
 
     def sample_memories(self, batch_size=32):
         """
-        Extracts memories from the agent's memory
-        Credits goes to https://github.com/ageron/handson-ml/blob/master/16_reinforcement_learning.ipynb
+        Extracts memories from the agent's memory.
+        Credits goes to https://github.com/ageron/handson-ml/blob/master/16_reinforcement_learning.ipynb.
+        
         :param batch_size: Size of the batch that we extract form the memory
         :return: State, action, reward, next_state, and done values as np.arrays
         """
