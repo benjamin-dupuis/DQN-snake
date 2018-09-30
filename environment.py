@@ -9,22 +9,23 @@ from collections import deque
 WHITE = (255, 255, 255)
 SCREEN_WIDTH = 250
 SCREEN_HEIGHT = 250
-OUT_PENALTY = -1    # Penalty when the snake quits the screen
-LIFE_REWARD = 0    # Reward given to the snake for being alive
+OUT_PENALTY = -1
+LIFE_REWARD = 0   
 APPLE_REWARD = 1
-INPUT_HEIGHT = 84  # Height of the reshaped screen image
-INPUT_WIDTH = 84   # Width of the reshaped screen image
+INPUT_HEIGHT = 84 
+INPUT_WIDTH = 84   
 
 pygame.init()
 
 
 def image_transform(image_path, image_width, image_heigth):
     """
-    Loads an image to be displayed on the pygame screen
-    :param image_path: path of the image to load
-    :param image_width: desired image width
-    :param image_heigth: desired image height
-    :return: image with dimension (image_width, image_height)
+    Loads an image and reshapes it.
+    
+    :param image_path: The path of the image to load
+    :param image_width: The desired image width
+    :param image_heigth: The desired image height
+    :return: Image with dimension (image_width, image_height)
     """
     image = pygame.image.load(image_path)
     image = pygame.transform.scale(image, (image_width, image_heigth))
@@ -45,8 +46,8 @@ class Snake:
 
     def _is_moving_backwards(self, action):
         """
-        Function to see if the snake is trying to move backwards (which you can't do in the game)
-        :param action: action selected by the agent
+        Checks if the snake is trying to move backwards (which you can't do in the game)
+        :param action: The action selected by the agent
         :return: True is the action is the inverse of the snake's direction and False otherwise
         """
         # If the action selected and the direction are opposites
@@ -94,7 +95,8 @@ class Snake:
 
     def draw(self, screen, image):
         """
-        Function that draws every part of the snake body
+        Function that draws every part of the snake body.
+        
         :param screen: pygame screen
         :param image: image that we want to draw on the screen
         """
@@ -114,8 +116,9 @@ class Apple:
 
     def get_new_position(self, screen_width, screen_height):
         """
-        Gets a new position for the apple. Checks to be sure the apple is not
-        placed inside the snake's body.
+        Gets a new position for the apple. 
+        Checks to be sure the apple is not placed inside the snake's body.
+        
         :param screen_width: width of the pygame screen
         :param screen_height: height of the pygame screen
         """
@@ -150,10 +153,11 @@ class Environment:
 
     def get_last_frames(self, observation):
         """
-        Function to get the 4 previous frames of the game as the state
-        Credits goes to https://github.com/YuriyGuts/snake-ai-reinforcement
-        :param observation: screenshot of the game
-        :return: a state containing the 4 previous frames taken from the game
+        Gets the 4 previous frames of the game as the state.
+        Credits goes to https://github.com/YuriyGuts/snake-ai-reinforcement.
+        
+        :param observation: The screenshot of the game
+        :return: The state containing the 4 previous frames taken from the game
         """
         frame = observation
         if self._frames is None:
@@ -166,8 +170,9 @@ class Environment:
 
     def render(self, display=False):
         """
-        Function to show and update the game on the screen
-        :param display: true if we want to show the score in the title of the screen
+        Shows and updates the game on the screen.
+        
+        :param display: True if we want to show the score in the title of the screen
         """
         self._screen.fill(WHITE)
 
@@ -190,16 +195,17 @@ class Environment:
         data = pygame.image.tostring(self._screen, 'RGB')  # Take screenshot
         image = Image.frombytes('RGB', (self._screen_width, self._screen_height), data)
         image = image.convert('L')  # Convert to greyscale
-        image = image.resize((INPUT_HEIGHT, INPUT_WIDTH))  # Resize
+        image = image.resize((INPUT_HEIGHT, INPUT_WIDTH)) 
         matrix = np.asarray(image.getdata(), dtype=np.uint8)
         matrix = (matrix - 128)/(128 - 1)  # Normalize from -1 to 1
         return matrix.reshape(image.size[0], image.size[1])
     
     def step(self, action):
         """
-        Makes the snake move according to the selected action
-        :param action: action selected by the agent
-        :return: the new state, the reward, and the done value
+        Makes the snake move according to the selected action.
+        
+        :param action: The action selected by the agent
+        :return: The new state, the reward, and the done value
         """
         done = False
         snake.move(action)
@@ -213,7 +219,7 @@ class Environment:
 
         snake_position = (snake.x, snake.y)
         apple_position = (apple.x, apple.y)
-        dst = distance.euclidean(snake_position, apple_position)  # Distance between the snake head and the apple
+        dst = distance.euclidean(snake_position, apple_position)
 
         # IF SNAKES EATS THE APPLE
         if dst <= apple.size:
@@ -233,7 +239,5 @@ class Environment:
                 break
 
         new_observation = self.screenshot()
-
         new_state = self.get_last_frames(new_observation)
-
         return new_state, reward, done
