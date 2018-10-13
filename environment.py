@@ -27,7 +27,7 @@ def image_transform(image_path, image_width, image_heigth):
     :param image_heigth: The desired image height
     :return: Image with dimension (image_width, image_height)
     """
-    image = pygame.image.load(image_path)
+    image = pygame.image.load(image_path).convert()
     image = pygame.transform.scale(image, (image_width, image_heigth))
     return image
 
