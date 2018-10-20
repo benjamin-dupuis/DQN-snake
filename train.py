@@ -4,11 +4,36 @@ from actorCritic import ActorCritic
 import pygame
 from datetime import datetime
 import os
+import argparse
 
+
+parser = argparse.ArgumentParser(description='DQN-snake testing.')
+parser.add_argument('--learningRate', type=float, required=False, default=0.0001,
+                    help='Learning rate of the training of the agent.')
+parser.add_argument('--memorySize', type=int, required=False, default=100000,
+                    help='The number of past events remembered by the agent.')
+
+parser.add_argument('--discountRate', type=float, required=False, default=0.95,
+                    help={'The discount rate is the parameter that indicates how many actions '
+                          'will be considered in the future to evaluate the reward of a given action.'
+                          'A value of 0 means the agent only considers the present action, '
+                          'and a value close to 1 means the agent considers actions very far in the future.'})
+
+parser.add_argument('--epsilonMin', type=float, required=False, default=0.05,
+                    help='The percentage of random actions take by the agent.')
+
+
+args = parser.parse_args()
+learning_rate = args.learningRate
+memory_size = args.memorySize
+discount_rate = args.discount_rate
+eps_min = args.epsilonMin
 
 env = Environment()
 session = tf.Session()
-agent = ActorCritic(session)
+agent = ActorCritic(sess=session, learning_rate=learning_rate,
+                    memory_size=memory_size, discount_rate=discount_rate, eps_min=eps_min)
+
 
 pygame.init()  # Intializes the game
 
@@ -26,7 +51,7 @@ running = True
 action = 0
 done = False
 iteration = 0
-training_interval = 4
+training_interval = 2
 n_steps = 5000000  # Total number of training steps
 n_games = 0
 mean_score = 0
@@ -62,7 +87,7 @@ with session as sess:
         # Train the agent
         agent.train(file_writer, mean_score)
 
-        if iteration % 200 == 0:
+        if iteration % 500 == 0:
             print("\rTraining step {}/{} ({:.1f})%\tMean score {:.2f} ".format(
                 step, n_steps, step * 100 / n_steps, mean_score), end="")
 

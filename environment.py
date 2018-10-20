@@ -145,11 +145,13 @@ class Environment:
         self._frames = None
         self._num_last_frames = 4
         self.reset()
+        self._game_reward = 0
 
     def reset(self):
         snake.dead()
         apple.get_new_position(self._screen_width, self._screen_height)
         self._frames = None
+        self._game_reward = 0
 
     def get_last_frames(self, observation):
         """
@@ -224,9 +226,10 @@ class Environment:
         # IF SNAKES EATS THE APPLE
         if dst <= apple.size:
             snake.eat()
-            reward = APPLE_REWARD
             apple.get_new_position(self._screen_width, self._screen_height)
             self.total_rewards += 1
+            self._game_reward += APPLE_REWARD
+            reward = self._game_reward
 
         # IF SNAKE EATS ITSELF
         head_pos = (snake.tail[0][0], snake.tail[0][1])

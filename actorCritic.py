@@ -26,7 +26,7 @@ def clipped_error(x):
 
 class ActorCritic:
 
-    def __init__(self, sess, learning_rate=0.0001, momentum=0.95, memory_size=10000, discount_rate=0.90):
+    def __init__(self, sess, learning_rate=0.0001, momentum=0.95, memory_size=100000, discount_rate=0.95, eps_min=0.05):
         self.activation = tf.nn.relu
         self.optimizer = tf.train.MomentumOptimizer
         self.learning_rate = learning_rate
@@ -45,7 +45,7 @@ class ActorCritic:
         '''
         self.discount_rate = discount_rate
 
-        self.eps_min = 0.1
+        self.eps_min = eps_min
         self.eps_decay_steps = 2000000
 
         self.sess = sess

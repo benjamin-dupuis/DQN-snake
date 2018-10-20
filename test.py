@@ -4,6 +4,7 @@ from actorCritic import ActorCritic
 import time
 import pygame
 import os
+import argparse
 
 env = Environment()
 session = tf.Session()
@@ -14,7 +15,14 @@ checkpoint_path = './models/new_model/dqn.ckpt'   # Path of the trained model
 games_scores = []  # List that will contain the score of each game played by the gamebot
 
 
-def test_network(n_games):
+parser = argparse.ArgumentParser(description='DQN-snake testing.')
+parser.add_argument('--numberOfGames', type=int, required=False, default=10,
+                    help='Number of test games.')
+parser.add_argument('--slowDownFactor', type=float, required=False, default=0.06,
+                    help='The factor to make the game slow down. A value of 0 means the games is at full speed.')
+
+
+def test_network(n_games, slow_down_factor):
     episode = 0
     iterations_without_progress = 0
     max_without_progress = 175
@@ -24,7 +32,7 @@ def test_network(n_games):
         agent.saver.restore(sess, checkpoint_path)   # Restore the model
 
         while episode < n_games:  # Number of games that we want the robot to play
-            time.sleep(600.0 / 10000.0)     # Make the game slow down
+            time.sleep(slow_down_factor)     # Make the game slow down
 
             env.render(display=True)
             observation = env.screenshot()
@@ -58,8 +66,10 @@ def test_network(n_games):
 
 if __name__ == '__main__':
 
+    args = parser.parse_args()
+
     if os.path.isfile(checkpoint_path + ".index"):  # Check to see if the model exists
-        games_scores = test_network(10)
+        games_scores = test_network(args.numberOfGames, args.slowDownFactor)
         mean_score = np.mean(games_scores)
         std = np.std(games_scores)
         max_score = np.max(games_scores)
