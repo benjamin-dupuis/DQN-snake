@@ -26,7 +26,7 @@ parser.add_argument('--epsilonMin', type=float, required=False, default=0.05,
 args = parser.parse_args()
 learning_rate = args.learningRate
 memory_size = args.memorySize
-discount_rate = args.discount_rate
+discount_rate = args.discountRate
 eps_min = args.epsilonMin
 
 env = Environment()
