@@ -123,6 +123,28 @@ The low mean score is representative of the fact that the snake was prone to get
 In the future, I will try different versions of the model, especially by changing the discount rate. 
 
 
+### Model 2:
+
+For the second experiment, I kept the same CNN architecture, but chose the following parameters:
+
+
+- memory_size : 100 000
+- momentum : 0.95
+- discount_rate : 0.95
+- training_interval : 2
+- learning_rate : 0.0001
+- eps_min : 0.05
+- eps_decay_steps : 2 000 000
+- n_steps : 5 000 000
+
+
+Like reviously, I made the gamebot play 200 games, and obtained the following results:
+
+Max score: 16.00, Mean score:, 3.35 Standard deviation: 3.79.
+
+The mean score improved, but more ajustements are necessary. A way to improve the results would be to give the apple the same initial position for each game, which is random at the moment. That would enable the snake to get an easier start and prevent it of being stuck at the beginning of a game.
+
+
 ## References 
 
 - [deep-q-snake](https://github.com/danielegrattarola/deep-q-snake)
