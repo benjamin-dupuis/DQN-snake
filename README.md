@@ -40,6 +40,43 @@ To start training a new model or to continue training an existing model, run
 python train.py
 ```
 
+Arguments can be passed in the previous command to try differents training parameters : 
+
+<table>
+  <tr>
+    <th>Option</th>
+    <th>Description</th>
+    <th>Default value</th>
+    <th>Required</th>
+  </tr>
+  <tr>
+    <td>--learningRate</td>
+    <td>Rate at which the agent is learning.<br><br>Example : --learningRate 0.002</td>
+    <td>.0001</td>
+    <td>No</td>
+  </tr>
+  <tr>
+    <td>--memorySize</td>
+    <td>Number of events remembered by the agent.<br><br>Example : --memorySize 50000</td>
+    <td>100000</td>
+    <td>No</td>
+  </tr>
+  <tr>
+    <td>--discountRate</td>
+    <td>The discount rate is the<span style="font-weight:bold"> </span>parameter that indicates<br>how<span style="font-weight:bold"> </span>many actions will be considered in the future <br>to evaluate the reward of a given action.  <br>A value of 0 means the agent only <br>considers the present action,<br>and a value close to 1 means the agent<br>considers actions very far in the future.<br><br>Example : --discountRate 0.99</td>
+    <td>0.95</td>
+    <td>No</td>
+  </tr>
+  <tr>
+    <td>--epsilonMin</td>
+    <td>Percentage of random actions selected by the agent.<br><br>Example: --epsilonMin 0.10</td>
+    <td>0.05</td>
+    <td>No</td>
+  </tr>
+</table>
+
+
+
 To test the performance of your gamebot, run 
 ```
 python test.py
