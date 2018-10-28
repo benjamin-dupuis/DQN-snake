@@ -16,10 +16,15 @@ games_scores = []  # List that will contain the score of each game played by the
 
 
 parser = argparse.ArgumentParser(description='DQN-snake testing.')
+
 parser.add_argument('--numberOfGames', type=int, required=False, default=10,
                     help='Number of test games.')
+
 parser.add_argument('--slowDownFactor', type=float, required=False, default=0.06,
                     help='The factor to make the game slow down. A value of 0 means the games is at full speed.')
+
+parser.add_argument('--modelName', type=str, required=True,
+                    help='The name of the model.')
 
 
 def test_network(n_games, slow_down_factor):

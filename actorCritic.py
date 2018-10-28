@@ -10,15 +10,6 @@ CHANNELS = 4
 N_OUTPUTS = 4  # Number of possible actions that the agent can make (the four directions)
 
 
-models_path = './models/new_model/'
-
-# Create the folder where we will save our model if it does not already exist
-if not os.path.isdir(models_path):
-    os.makedirs(models_path)
-
-checkpoint_path = models_path + 'dqn.ckpt'
-
-
 # To be more robust to outliers, we use a quadratic loss for small errors, and a linear loss for large ones.
 def clipped_error(x):
     return tf.where(tf.abs(x) < 1.0, 0.5 * tf.square(x), tf.abs(x) - 0.5)
@@ -50,7 +41,6 @@ class ActorCritic:
 
         self.sess = sess
         self.init = tf.global_variables_initializer()
-        self.y_vals = None
 
     def cnn_model(self, X_state, name):
         """
@@ -137,7 +127,7 @@ class ActorCritic:
             self.score_summary = tf.summary.scalar('mean score', self.mean_score)
             self.summary_merged = tf.summary.merge([self.loss_summary, self.score_summary])
 
-    def start(self):
+    def start(self, checkpoint_path):
         """
         Intialize the model or restore the model if it already exists.
         
@@ -155,12 +145,13 @@ class ActorCritic:
             print('New model...')
         return training_start
 
-    def train(self, file_writer, mean_score):
+    def train(self, checkpoint_path, file_writer, mean_score):
         """
         Trains the agent and writes regularly a training summary.
-        
-        :param file_writer: file where the training summary will be written for Tensorboard visualization
-        :param mean_score: mean game score
+
+        :param checkpoint_path: The path where the model will be saved
+        :param file_writer: The file where the training summary will be written for Tensorboard visualization
+        :param mean_score: The mean game score
         """
         copy_steps = 5000  
         save_steps = 2000   

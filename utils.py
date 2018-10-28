@@ -1,4 +1,7 @@
 import numpy as np
+from datetime import datetime
+import os
+import tensorflow as tf
 
 
 class ReplayMemory:
@@ -23,3 +26,23 @@ class ReplayMemory:
         else:
             indices = np.random.permutation(self.length)[:batch_size]
         return self.buf[indices]
+
+
+def get_file_writer(model_name, session):
+    now = datetime.utcnow().strftime('%Y%m%d%H%M%S')
+    root_logdir = 'tf_logs/{}'.format(model_name)
+    if not os.path.isdir(root_logdir):
+        os.makedirs(root_logdir)
+
+    log_dir = '{}/run-{}/'.format(root_logdir, now)
+    file_writer = tf.summary.FileWriter(log_dir, session.graph)
+    return file_writer
+
+
+def get_checkpoint_path(model_name):
+    model_path = './models/{}/'.format(model_name)
+
+    if not os.path.isdir(model_path):
+        os.makedirs(model_path)
+    checkpoint_path = model_path + 'dqn.ckpt'
+    return checkpoint_path

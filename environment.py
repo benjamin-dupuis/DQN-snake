@@ -111,8 +111,10 @@ class Apple:
 
     def __init__(self):
         self.size = snake.size
-        self.x = random.randrange(5, SCREEN_WIDTH - 15)
-        self.y = random.randrange(5, SCREEN_HEIGHT - 15)
+
+    def reset(self, screen_width, screen_height):
+        self.x = int(screen_width/3)
+        self.y = int(screen_height/3)
 
     def get_new_position(self, screen_width, screen_height):
         """
@@ -149,7 +151,7 @@ class Environment:
 
     def reset(self):
         snake.dead()
-        apple.get_new_position(self._screen_width, self._screen_height)
+        apple.reset(self._screen_width, self._screen_height)
         self._frames = None
         self._game_reward = 0
 

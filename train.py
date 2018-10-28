@@ -2,14 +2,18 @@ from environment import *
 import tensorflow as tf
 from actorCritic import ActorCritic
 import pygame
-from datetime import datetime
-import os
 import argparse
+from utils import get_checkpoint_path, get_file_writer
 
 
 parser = argparse.ArgumentParser(description='DQN-snake testing.')
+
+parser.add_argument('--modelName', type=str, required=True,
+                    help='The name of the model.')
+
 parser.add_argument('--learningRate', type=float, required=False, default=0.0001,
                     help='Learning rate of the training of the agent.')
+
 parser.add_argument('--memorySize', type=int, required=False, default=100000,
                     help='The number of past events remembered by the agent.')
 
@@ -22,74 +26,80 @@ parser.add_argument('--discountRate', type=float, required=False, default=0.95,
 parser.add_argument('--epsilonMin', type=float, required=False, default=0.05,
                     help='The percentage of random actions take by the agent.')
 
+parser.add_argument('--trainingInterval', type=int, required=False, default=2,
+                    help='The interval between two training steps.')
+
+parser.add_argument('--numberOfSteps', type=int, required=False, default=5000000,
+                    help='The total number of training steps.')
+
 
 args = parser.parse_args()
+model_name = args.modelName
 learning_rate = args.learningRate
 memory_size = args.memorySize
-discount_rate = args.discount_rate
+discount_rate = args.discountRate
 eps_min = args.epsilonMin
+training_interval = args.trainingInterval
+n_steps = args.numberOfSteps
 
-env = Environment()
+
 session = tf.Session()
-agent = ActorCritic(sess=session, learning_rate=learning_rate,
-                    memory_size=memory_size, discount_rate=discount_rate, eps_min=eps_min)
 
 
-pygame.init()  # Intializes the game
+def train(env, agent):
+    file_writer = get_file_writer(model_name=model_name, session=session)
+    checkpoint_path = get_checkpoint_path(model_name=model_name)
 
-# Makes the folder where the tensorflow log will be written for Tensorboard visualization
-now = datetime.utcnow().strftime('%Y%m%d%H%M%S')
-root_logdir = 'tf_logs/new_model'
-if not os.path.isdir(root_logdir):
-    os.makedirs(root_logdir)
+    running = True
+    done = False
+    iteration = 0
+    n_games = 0
+    mean_score = 0
 
-log_dir = '{}/run-{}/'.format(root_logdir, now)
-file_writer = tf.summary.FileWriter(log_dir, session.graph)  # Log file for Tensorboard
+    with session:
+        training_start = agent.start(checkpoint_path)
+
+        while running:
+            iteration += 1
+            env.render()
+
+            if done:  # Game over, start a new game
+                env.reset()
+                n_games += 1
+                mean_score = env.total_rewards / n_games
+
+            for event in pygame.event.get():  # Stop the program if we quit the game
+                if event.type == pygame.QUIT:
+                    running = False
+
+            observation = env.screenshot()
+            cur_state = env.get_last_frames(observation)
+            step = agent.global_step.eval()
+
+            action = agent.act(cur_state, step)
+            new_state, reward, done = env.step(action)
+            agent.remember(cur_state, action, reward, new_state, done)
+
+            # Only train at regular intervals
+            if iteration < training_start or iteration % training_interval != 0:
+                continue
+
+            # Train the agent
+            agent.train(checkpoint_path, file_writer, mean_score)
+
+            if iteration % 500 == 0:
+                print("\rTraining step {}/{} ({:.1f})%\tMean score {:.2f} ".format(
+                    step, n_steps, step * 100 / n_steps, mean_score), end="")
+
+            if step > n_steps:
+                break
 
 
-running = True
-action = 0
-done = False
-iteration = 0
-training_interval = 2
-n_steps = 5000000  # Total number of training steps
-n_games = 0
-mean_score = 0
+if __name__ == '__main__':
+    pygame.init()  # Intializes the game
 
-with session as sess:
-    training_start = agent.start()
+    environment = Environment()
+    training_agent = ActorCritic(sess=session, learning_rate=learning_rate,
+                                 memory_size=memory_size, discount_rate=discount_rate, eps_min=eps_min)
 
-    while running:
-        iteration += 1
-        env.render()
-
-        if done:  # Game over, start a new game
-            env.reset()
-            n_games += 1
-            mean_score = env.total_rewards / n_games
-
-        for event in pygame.event.get():  # Stop the program if we quit the game
-            if event.type == pygame.QUIT:
-                running = False
-
-        observation = env.screenshot()
-        cur_state = env.get_last_frames(observation)
-        step = agent.global_step.eval()
-
-        action = agent.act(cur_state, step)
-        new_state, reward, done = env.step(action)
-        agent.remember(cur_state, action, reward, new_state, done)
-
-        # Only train at regular intervals
-        if iteration < training_start or iteration % training_interval != 0:
-            continue
-
-        # Train the agent
-        agent.train(file_writer, mean_score)
-
-        if iteration % 500 == 0:
-            print("\rTraining step {}/{} ({:.1f})%\tMean score {:.2f} ".format(
-                step, n_steps, step * 100 / n_steps, mean_score), end="")
-
-        if step > n_steps:
-            break
+    train(environment, training_agent)
