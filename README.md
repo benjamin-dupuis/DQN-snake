@@ -37,12 +37,57 @@ cd DQN-snake
 
 To start training a new model or to continue training an existing model, run
 ```
-python train.py
+python train.py --modelName <nameOfYourModel>
 ```
+
+Arguments can be passed in the previous command to try differents training parameters : 
+
+<table>
+  <tr>
+    <th>Option</th>
+    <th>Description</th>
+    <th>Default value</th>
+    <th>Required</th>
+  </tr>
+  <tr>
+    <td>--modelName</td>
+    <td>Name of the model.<br><br>Example : --modelName new_model</td>
+    <td>---</td>
+    <td>Yes</td>
+  </tr>
+  <tr>
+    <td>--learningRate</td>
+    <td>Rate at which the agent is learning.<br><br>Example : --learningRate 0.002</td>
+    <td>.0001</td>
+    <td>No</td>
+  </tr>
+  <tr>
+    <td>--memorySize</td>
+    <td>Number of events remembered by the agent.<br><br>Example : --memorySize 50000</td>
+    <td>100000</td>
+    <td>No</td>
+  </tr>
+  <tr>
+    <td>--discountRate</td>
+    <td>The discount rate is the<span style="font-weight:bold"> </span>parameter that indicates<br>how<span style="font-weight:bold"> </span>many actions will be considered in the future <br>to evaluate the reward of a given action.  <br>A value of 0 means the agent only <br>considers the present action,<br>and a value close to 1 means the agent<br>considers actions very far in the future.<br><br>Example : --discountRate 0.99</td>
+    <td>0.95</td>
+    <td>No</td>
+  </tr>
+  <tr>
+    <td>--epsilonMin</td>
+    <td>Percentage of random actions selected by the agent.<br><br>Example: --epsilonMin 0.10</td>
+    <td>0.05</td>
+    <td>No</td>
+  </tr>
+</table>
+
+
+
+
 
 To test the performance of your gamebot, run 
 ```
-python test.py
+python test.py --modelName <nameOfYourModel>
 ```
 
 To play the game yourself, run 
@@ -84,6 +129,28 @@ After 5 000 000 training steps, I tested the gamebot by making it play 200 games
 
 The low mean score is representative of the fact that the snake was prone to getting stuck (always repeating the same movements).
 In the future, I will try different versions of the model, especially by changing the discount rate. 
+
+
+### Model 2:
+
+For the second experiment, I kept the same CNN architecture, but chose the following parameters:
+
+
+- memory_size : 100 000
+- momentum : 0.95
+- discount_rate : 0.95
+- training_interval : 2
+- learning_rate : 0.0001
+- eps_min : 0.05
+- eps_decay_steps : 2 000 000
+- n_steps : 5 000 000
+
+
+Like reviously, I made the gamebot play 200 games, and obtained the following results:
+
+Max score: 16.00, Mean score:, 3.35 Standard deviation: 3.79.
+
+The mean score improved, but more ajustements are necessary. A way to improve the results would be to give the apple the same initial position for each game, which is random at the moment. That would enable the snake to get an easier start and prevent it of being stuck at the beginning of a game.
 
 
 ## References 
