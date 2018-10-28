@@ -37,7 +37,7 @@ cd DQN-snake
 
 To start training a new model or to continue training an existing model, run
 ```
-python train.py
+python train.py --modelName <nameOfYourModel>
 ```
 
 Arguments can be passed in the previous command to try differents training parameters : 
@@ -48,6 +48,12 @@ Arguments can be passed in the previous command to try differents training param
     <th>Description</th>
     <th>Default value</th>
     <th>Required</th>
+  </tr>
+  <tr>
+    <td>--modelName</td>
+    <td>Name of the model.<br><br>Example : --modelName new_model</td>
+    <td>---</td>
+    <td>Yes</td>
   </tr>
   <tr>
     <td>--learningRate</td>
@@ -77,9 +83,11 @@ Arguments can be passed in the previous command to try differents training param
 
 
 
+
+
 To test the performance of your gamebot, run 
 ```
-python test.py
+python test.py --modelName <nameOfYourModel>
 ```
 
 To play the game yourself, run 
