@@ -148,9 +148,16 @@ For the second experiment, I kept the same CNN architecture, but chose the follo
 
 Like reviously, I made the gamebot play 200 games, and obtained the following results:
 
-Max score: 16.00, Mean score:, 3.35 Standard deviation: 3.79.
+Max score: 16.00, Mean score: 3.35, Standard deviation: 3.79.
 
 The mean score improved, but more ajustements are necessary. A way to improve the results would be to give the apple the same initial position for each game, which is random at the moment. That would enable the snake to get an easier start and prevent it of being stuck at the beginning of a game.
+
+
+### Model 3:
+
+For the third experiment, I kept the same parameters as in model 2, but I fixed the initial position of the apple. That made the snake have an easier start, and therefore the number of times it got stuck reduced. When testing, the numbers after the 200 games played improved : 
+
+Max score: 15.00, Mean score: 4.25, Standard deviation: 3.29.
 
 
 ## References 
