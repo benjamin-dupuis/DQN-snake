@@ -7,8 +7,6 @@ from collections import deque
 
 
 WHITE = (255, 255, 255)
-SCREEN_WIDTH = 250
-SCREEN_HEIGHT = 250
 OUT_PENALTY = -1
 LIFE_REWARD = 0   
 APPLE_REWARD = 1
@@ -33,16 +31,20 @@ def image_transform(image_path, image_width, image_heigth):
 
 
 class Snake:
+    """
+    Represents the snake and his interactions with his environment.
+    The initial configuration of the snake is obtained by the reset function.
+    """
 
     def __init__(self, lenght=3, speed=25):
         self.lenght = lenght
-        self.x = int(SCREEN_WIDTH/2)
-        self.y = int(SCREEN_HEIGHT/2)
         self.size = speed
         self.speed = speed
-        self.tail = deque([self.x + i * speed, self.y] for i in range(self.lenght))
-        self.direction = 0
-        self.total = 0
+        self.direction = None
+        self.x = None
+        self.y = None
+        self.total = None
+        self.tail = None
 
     def _is_moving_backwards(self, action):
         """
@@ -85,11 +87,11 @@ class Snake:
         self.total += 1
         self.tail.appendleft([self.x, self.y])
 
-    def dead(self):
+    def dead(self, screen_width, screen_height):
         self.total = 0
         self.lenght = 3
-        self.x = int(SCREEN_WIDTH/2)
-        self.y = int(SCREEN_HEIGHT/2)
+        self.x = screen_width/2
+        self.y = screen_height/2
         self.tail = deque([self.x + i * self.speed, self.y] for i in range(self.lenght))
         self.direction = 0
 
@@ -104,29 +106,33 @@ class Snake:
             screen.blit(image, (self.tail[i][0], self.tail[i][1]))
 
 
-snake = Snake() 
-
-
 class Apple:
+    """
+    Represents the Apple entity, that obtains a new position when eaten.
+    The initial configuration of the apple object is obtained by the reset function.
+    """
 
-    def __init__(self):
-        self.size = snake.size
+    def __init__(self, size=25):
+        self.size = size
+        self.x = None
+        self.y = None
 
     def reset(self, screen_width, screen_height):
         self.x = int(screen_width/3)
         self.y = int(screen_height/3)
 
-    def get_new_position(self, screen_width, screen_height):
+    def get_new_position(self, screen_width, screen_height, snake_tail):
         """
         Gets a new position for the apple. 
         Checks to be sure the apple is not placed inside the snake's body.
         
-        :param screen_width: width of the pygame screen
-        :param screen_height: height of the pygame screen
+        :param screen_width: The width of the game screen
+        :param screen_height: The height of the game screen
+        :param snake_tail: The list representing the tail of the snake
         """
         all_positions = [[x, y] for x in range(self.size, screen_width - self.size)
                          for y in range(self.size, screen_height - self.size)]
-        allowed_positions = [coord for coord in all_positions if coord not in snake.tail]
+        allowed_positions = [coord for coord in all_positions if coord not in snake_tail]
         self.x = random.choice(allowed_positions)[0]
         self.y = random.choice(allowed_positions)[1]
 
@@ -134,24 +140,31 @@ class Apple:
         screen.blit(image, (self.x, self.y))
 
 
-apple = Apple() 
-
-
 class Environment:
+    """
+    Represents the RL environment where the agent interacts and obtains rewards associated with is actions.
+    """
 
-    def __init__(self, screen_width=SCREEN_WIDTH, screen_height=SCREEN_HEIGHT):
+    screen_width = 250
+    screen_height = 250
+    apple_size = 25
+
+    def __init__(self, screen_width=screen_width, screen_height=screen_height):
         self.total_rewards = 0
         self._screen = pygame.display.set_mode((screen_width, screen_height))
         self._screen_width = screen_width
         self._screen_height = screen_height
         self._frames = None
         self._num_last_frames = 4
+        self.apple = Apple(self.apple_size)
+        self.snake = Snake()
+
         self.reset()
         self._game_reward = 0
 
     def reset(self):
-        snake.dead()
-        apple.reset(self._screen_width, self._screen_height)
+        self.snake.dead(self._screen_width, self._screen_height)
+        self.apple.reset(self._screen_width, self._screen_height)
         self._frames = None
         self._game_reward = 0
 
@@ -180,14 +193,14 @@ class Environment:
         """
         self._screen.fill(WHITE)
 
-        image_snake = image_transform('./images/bloc.png', snake.size, snake.size)
-        image_apple = image_transform('./images/apple.jpg', apple.size, apple.size)
+        image_snake = image_transform('./images/bloc.png', self.snake.size, self.snake.size)
+        image_apple = image_transform('./images/apple.jpg', self.apple.size, self.apple.size)
 
-        apple.draw(self._screen, image_apple)
-        snake.draw(self._screen, image_snake)
+        self.apple.draw(self._screen, image_apple)
+        self.snake.draw(self._screen, image_snake)
 
         if display is True:
-            pygame.display.set_caption('Score : ' + str(snake.total)) 
+            pygame.display.set_caption('Score : ' + str(self.snake.total))
         pygame.display.update()
 
     def screenshot(self):
@@ -212,33 +225,33 @@ class Environment:
         :return: The new state, the reward, and the done value
         """
         done = False
-        snake.move(action)
+        self.snake.move(action)
 
         reward = LIFE_REWARD   # Reward given to stay alive
 
         # IF SNAKE QUITS THE SCREEEN
-        if snake.x in [-snake.size, self._screen_width] or snake.y in [-snake.size, self._screen_height]:
+        if self.snake.x in [-self.snake.size, self._screen_width] or self.snake.y in [-self.snake.size, self._screen_height]:
             reward = OUT_PENALTY
             done = True
 
-        snake_position = (snake.x, snake.y)
-        apple_position = (apple.x, apple.y)
+        snake_position = (self.snake.x, self.snake.y)
+        apple_position = (self.apple.x, self.apple.y)
         dst = distance.euclidean(snake_position, apple_position)
 
         # IF SNAKES EATS THE APPLE
-        if dst <= apple.size:
-            snake.eat()
-            apple.get_new_position(self._screen_width, self._screen_height)
+        if dst <= self.apple.size:
+            self.snake.eat()
+            self.apple.get_new_position(self._screen_width, self._screen_height, self.snake.tail)
             self.total_rewards += 1
             self._game_reward += APPLE_REWARD
             reward = self._game_reward
 
         # IF SNAKE EATS ITSELF
-        head_pos = (snake.tail[0][0], snake.tail[0][1])
-        for i in range(2, len(snake.tail)):
-            body_part_pos = (snake.tail[i][0], snake.tail[i][1])
+        head_pos = (self.snake.tail[0][0], self.snake.tail[0][1])
+        for i in range(2, len(self.snake.tail)):
+            body_part_pos = (self.snake.tail[i][0], self.snake.tail[i][1])
             dst_body = distance.euclidean(head_pos, body_part_pos)  
-            if dst_body < snake.size:
+            if dst_body < self.snake.size:
                 done = True
                 reward = -1
                 break

@@ -6,7 +6,7 @@ import time
 pygame.init()   # Intialize the game
 snake = Snake()
 apple = Apple()
-env = Environment(screen_width=400, screen_height=400)   # Make the screen larger so it's easier to play
+env = Environment(screen_width=350, screen_height=350)   # Make the screen larger so it's easier to play
 running = True
 done = True
 action = 0  # Initialize the action to be 0 (LEFT)
