@@ -6,6 +6,10 @@ __pycache__/
 # C extensions
 *.so
 
+.idea
+tf_logs
+models
+
 # Distribution / packaging
 .Python
 build/
