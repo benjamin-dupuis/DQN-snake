@@ -2,7 +2,7 @@
 TensorFlow implementation of a DQN algorithm to learn to play the game of Snake.
 The game was written using Pygame. During training, a Tensorboad file is produced to visualize the performance of the model.
 
-![ezgif com-gif-maker](https://user-images.githubusercontent.com/41129002/44306716-6ddb2100-a362-11e8-8fde-26d8fc375742.gif)
+![ezgif com-gif-maker 1](https://user-images.githubusercontent.com/41129002/50708293-d553ed80-1031-11e9-85ce-76378d208d14.gif)
 
 
 ## Requirements
@@ -155,9 +155,16 @@ The mean score improved, but more ajustements are necessary. A way to improve th
 
 ### Model 3:
 
-For the third experiment, I kept the same parameters as in model 2, but I fixed the initial position of the apple. That made the snake have an easier start, and therefore the number of times it got stuck reduced. When testing, the numbers after the 200 games played improved : 
+For the third experiment, I made two modifications to reduce the number of times the snake was getting stuck : 
 
-Max score: 15.00, Mean score: 4.25, Standard deviation: 3.29.
+1. I increased the eps_min factor to 0.20. Therefore, during training, 20% of the snake's actions were random, which disabled it to "learn to get stuck" 
+
+2. I fixed the initial position of the apple. That made the snake have an easier start, and therefore the number of times it got stuck reduced.
+
+
+When testing, the numbers after the 200 games played greatly improved : 
+
+Max score: 24.00 , Mean score: 5.09, Standard deviation: 4.23.
 
 
 ## References 
