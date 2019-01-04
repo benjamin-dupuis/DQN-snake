@@ -33,8 +33,6 @@ def make_agent_play_games(n_games, slow_down_factor):
     iterations_without_progress = 0
     max_without_progress = 200
     best_total = 0
-    n_outputs = 4
-    epsilon = agent.eps_min
 
     with session as sess:
         agent.saver.restore(sess, checkpoint_path)   # Restore the model
@@ -47,10 +45,7 @@ def make_agent_play_games(n_games, slow_down_factor):
             cur_state = env.get_last_frames(observation)
 
             q_values = agent.predict(cur_state)
-            if np.random.rand() < epsilon:
-                action =  np.random.randint(n_outputs)  # Random action
-            else:
-                action = np.argmax(q_values)  # Optimal action
+            action = np.argmax(q_values)  # Optimal action
 
             new_state, reward, done = env.step(action)
 

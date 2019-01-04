@@ -99,7 +99,8 @@ if __name__ == '__main__':
     pygame.init()  # Intializes the game
 
     environment = Environment()
-    training_agent = ActorCritic(sess=session, learning_rate=learning_rate,
-                                 memory_size=memory_size, discount_rate=discount_rate, eps_min=eps_min)
+    training_agent = ActorCritic(sess=session, training_steps=n_steps, learning_rate=learning_rate,
+                                 memory_size=memory_size, discount_rate=discount_rate,
+                                 eps_min=eps_min)
 
     train(environment, training_agent)
