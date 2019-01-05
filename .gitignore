@@ -9,6 +9,7 @@ __pycache__/
 .idea
 tf_logs
 models
+gifs
 
 # Distribution / packaging
 .Python
