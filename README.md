@@ -157,7 +157,7 @@ The mean score improved, but more ajustements are necessary. A way to improve th
 
 For the third experiment, I made two modifications to reduce the number of times the snake was getting stuck : 
 
-1. I increased the eps_min factor to 0.20. Therefore, during training, 20% of the snake's actions were random, which disabled it to "learn to get stuck" 
+1. I increased the eps_min factor to 0.20. Therefore, during training, 20% of the snake's actions were random.
 
 2. I fixed the initial position of the apple. That made the snake have an easier start, and therefore the number of times it got stuck reduced.
 
