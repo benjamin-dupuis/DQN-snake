@@ -35,7 +35,7 @@ This will create a folder on your computer that you can access from the command 
 cd DQN-snake
 ```
 
-Create a virutal environment and activate it. For infos, click [here](https://uoa-eresearch.github.io/eresearch-cookbook/recipe/2014/11/26/python-virtual-env/).
+Create a virtual environment and activate it. For infos, click [here](https://uoa-eresearch.github.io/eresearch-cookbook/recipe/2014/11/26/python-virtual-env/).
 
 
 Download the necessary libraries:
