@@ -1,10 +1,10 @@
-import pygame
 import random
-from scipy.spatial import distance
-import numpy as np
-from PIL import Image
 from collections import deque
 
+import numpy as np
+import pygame
+from PIL import Image
+from scipy.spatial import distance
 
 WHITE = (255, 255, 255)
 OUT_PENALTY = -1
@@ -33,11 +33,10 @@ def image_transform(image_path, image_width, image_heigth):
 class Snake:
     """
     Represents the snake and his interactions with his environment.
-    The initial configuration of the snake is obtained by the reset function.
     """
 
-    def __init__(self, lenght=3, speed=25):
-        self.lenght = lenght
+    def __init__(self, length=3, speed=25):
+        self.length = length
         self.size = speed
         self.speed = speed
         self.direction = None
@@ -89,10 +88,10 @@ class Snake:
 
     def dead(self, screen_width, screen_height):
         self.total = 0
-        self.lenght = 3
+        self.length = 3
         self.x = screen_width/2
         self.y = screen_height/2
-        self.tail = deque([self.x + i * self.speed, self.y] for i in range(self.lenght))
+        self.tail = deque([self.x + i * self.speed, self.y] for i in range(self.length))
         self.direction = 0
 
     def draw(self, screen, image):
@@ -109,7 +108,6 @@ class Snake:
 class Apple:
     """
     Represents the Apple entity, that obtains a new position when eaten.
-    The initial configuration of the apple object is obtained by the reset function.
     """
 
     def __init__(self, size=25):
@@ -118,6 +116,7 @@ class Apple:
         self.y = None
 
     def reset(self, screen_width, screen_height):
+        """Resets the position of the apple at the beginning of the game."""
         self.x = int(screen_width/3)
         self.y = int(screen_height/3)
 
@@ -163,6 +162,7 @@ class Environment:
         self._game_reward = 0
 
     def reset(self):
+        """Reset the environment and its components."""
         self.snake.dead(self._screen_width, self._screen_height)
         self.apple.reset(self._screen_width, self._screen_height)
         self._frames = None

@@ -1,7 +1,8 @@
-from environment import *
-import pygame
 import time
 
+import pygame
+
+from environment import Snake, Apple, Environment
 
 pygame.init()   # Intialize the game
 snake = Snake()

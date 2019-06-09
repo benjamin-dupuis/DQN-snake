@@ -1,12 +1,12 @@
-from environment import *
-import tensorflow as tf
-from actorCritic import ActorCritic
-import time
-import pygame
-import os
 import argparse
+import os
+import time
+
+import tensorflow as tf
+
+from actorCritic import ActorCritic
+from environment import *
 from utils import get_checkpoint_path
-import numpy as np
 
 env = Environment()
 session = tf.Session()
@@ -29,6 +29,13 @@ parser.add_argument('--modelName', type=str, required=True,
 
 
 def make_agent_play_games(n_games, slow_down_factor):
+    """
+    Make the agent play a given number of games
+
+    :param n_games: The number of games to play.
+    :param slow_down_factor: Throttling to make the snake move less rapidly.
+    :return: A list containing the score of each game played.
+    """
     episode = 0
     iterations_without_progress = 0
     max_without_progress = 200

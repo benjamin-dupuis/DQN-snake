@@ -1,0 +1,8 @@
+matplotlib==2.2.0
+numpy==1.14.3
+pandas==0.23.3
+Pillow==5.1.0
+pygame==1.9.3
+scipy==1.0.1
+tensorboard==1.6.0
+tensorflow-gpu==1.0.0

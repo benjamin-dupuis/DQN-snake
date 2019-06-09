@@ -1,8 +1,9 @@
-import numpy as np
-import tensorflow as tf
-from utils import ReplayMemory
 import os
 
+import numpy as np
+import tensorflow as tf
+
+from utils import ReplayMemory
 
 INPUT_HEIGHT = 84     
 INPUT_WIDTH = 84     

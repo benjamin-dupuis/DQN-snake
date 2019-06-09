@@ -1,10 +1,11 @@
-from environment import *
-import tensorflow as tf
-from actorCritic import ActorCritic
-import pygame
 import argparse
-from utils import get_checkpoint_path, get_file_writer
 
+import pygame
+import tensorflow as tf
+
+from actorCritic import ActorCritic
+from environment import *
+from utils import get_checkpoint_path, get_file_writer
 
 parser = argparse.ArgumentParser(description='DQN-snake testing.')
 
