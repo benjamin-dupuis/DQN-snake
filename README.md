@@ -8,17 +8,17 @@ The game was written using Pygame. During training, a Tensorboad file is produce
 ## Requirements
 
 The langage that is used is Python (version 3.5), which can be downloaded at https://www.python.org/. 
-The libraries that are needed are the following, which can be downloaded with the pip install command : 
 
-1. TensorFlow 1.5.0 (GPU support recommanded)
-2. pygame 
-3. numpy
+For this project, I used [Tensorflow](https://www.tensorflow.org/), an open source deep learning library. 
 
 Detailed and clear explanations on how to download the GPU version of TensorFlow on Windows 10 can be found at http://blog.nitishmutha.com/tensorflow/2017/01/22/TensorFlow-with-gpu-for-windows.html .
 
 
 For other platforms, explanations can be found at
 https://www.tensorflow.org/install . 
+
+
+The other libraries used are in the file ```requirements.txt```.
 
 
 
@@ -34,6 +34,18 @@ This will create a folder on your computer that you can access from the command 
 ```
 cd DQN-snake
 ```
+
+Create a virutal environment and activate it. For infos, click [here](https://uoa-eresearch.github.io/eresearch-cookbook/recipe/2014/11/26/python-virtual-env/).
+
+
+Download the necessary libraries:
+
+
+```
+pip install -r requirements.txt
+```
+
+
 
 To start training a new model or to continue training an existing model, run
 ```
