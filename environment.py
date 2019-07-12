@@ -129,9 +129,9 @@ class Apple:
         :param screen_height: The height of the game screen
         :param snake_tail: The list representing the tail of the snake
         """
-        all_positions = [[x, y] for x in range(self.size, screen_width - self.size)
+        all_positions = [(x, y) for x in range(self.size, screen_width - self.size)
                          for y in range(self.size, screen_height - self.size)]
-        allowed_positions = [coord for coord in all_positions if coord not in snake_tail]
+        allowed_positions = list(set(all_positions) - set(map(tuple, snake_tail)))
         self.x = random.choice(allowed_positions)[0]
         self.y = random.choice(allowed_positions)[1]
 
