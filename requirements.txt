@@ -5,4 +5,4 @@ Pillow==6.2.0
 pygame==1.9.3
 scipy==1.0.1
 tensorboard==1.6.0
-tensorflow-gpu==1.0.0
+tensorflow-gpu==1.15.2
