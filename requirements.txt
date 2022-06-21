@@ -1,5 +1,5 @@
 matplotlib==2.2.0
-numpy==1.14.3
+numpy==1.22.0
 pandas==0.23.3
 Pillow==6.2.0
 pygame==1.9.3
